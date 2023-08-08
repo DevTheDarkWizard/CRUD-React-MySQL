@@ -46,8 +46,10 @@ export const updateUser = (req, res) => {
 	];
 
 	database.query(query, [...values, id], (err) => {
-		if(err) return res.json({ message: "Falha ao atualizar usuário!", error: true });
-
+		if(err) {
+			if(err.code == "ER_DUP_ENTRY") return res.json({ message: "E-mail já cadastrado!", warn: true });
+			return res.json({ message: "Falha ao atualizar usuário!", error: true });
+		}
 		return res.status(200).json("Usuário atualizado com sucesso!");
 	});
 };
